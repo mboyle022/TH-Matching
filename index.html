@@ -2909,7 +2909,7 @@
 
        function displayResults(sku, skuIngredientNames, sharedIngredients) {
     const resultsDiv = document.getElementById('results');
-    const productName = skuToName[sku] ? `<h2>Ingredients for ${skuToName[sku]}</h2>` : ''; // Only set productName if found
+    const productName = skuToName[sku] ? `<h2>Ingredients for ${skuToName[sku]} (${skuIngredientNames.length} Ingredients)</h2>` : ''; // Only set productName if found
     resultsDiv.innerHTML = `${productName}<ul id="ingredients"><li>${[...skuIngredientNames].join(', ')}</li></ul><h3>Products sharing ingredients with ${skuToName[sku] || sku}</h3>`;
 
     // Convert sharedIngredients to an array, sort it by the size of ingredients set, and then iterate
