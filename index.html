@@ -47,11 +47,7 @@
     <script>
         const skuToName = {
             "AAI2": "Love Potion 2.0",
-            "ABT": "Aromatic Bedtime Treatment",
             "AET": "Aromatic Energy Treatment",
-            "AIT2": "Aromatic Irritability Treatment 2.0",
-            "AST2": "Aromatic Stress Treatment 2.0",
-            "BA": "Be Adored",
             "BCS2": "Boosted Contouring Serum 2.0",
             "BDS": "Smoothing Body Scrub",
             "BFL": "Flashy",
@@ -61,46 +57,28 @@
             "BNA": "Naughty",
             "BPE": "Peachy",
             "BSP": "Spicy",
-            "BT": "Be True",
             "CBE2": "Concentrated Brightening Essence 2.0",
             "CBS2": "Concentrated Brightening Serum 2.0",
-            "CCL": "Clarifying Cleanser",
             "CCL2": "Clarifying Cleanser 2.0",
-            "CMK": "Clarifying Mask",
             "CMK2": "Clarifying Mask 2.0",
             "CMR": "Clarifying Moiturizer",
             "COL2": "Nourishing Oil Cleanser 2.0",
-            "CSS": "Clarifying Spot Solution",
-            "DEH": "Very Flashy",
-            "DEX": "Small-Batch Exclusive Resurfacing Mask",
             "DTX2": "Purifying Mask 2.0",
-            "EEC2": "Elixir Vitae Eye Serum 2.0",
             "EEC3": "Elixir Vitae Eye Serum 3.0",
             "EEM2": "Boosted Contouring Eye Balm",
             "EV2": "Elixir Vitae (8-2019 onward)",
             "FCO": "Beautifying Face Oil",
-            "FEL2": "Illuminating Eye Crème 2.0",
             "FEL3": "Illuminating Eye Crème 3.0",
             "FML": "Illuminating Moisturizer",
             "GLC2": "Purifying Cleanser 2.0",
             "HFE2": "Hydrating Floral Essence 2.0",
             "HFM2": "Hydrating Floral Mask 2.0",
             "HGM": "Hyaluronic Gel Moisturizer",
-            "LBO2": "Limited Edition Revitalizing Body Oil 2.0",
-            "LCF": "Very Sweet",
-            "LCP": "Very Charming",
-            "LVN": "Very Naughty",
-            "LVP": "Very Popular",
             "MBL2": "Resurfacing Body Serum 2.0",
-            "OBO": "Calendula Body Oil",
-            "PET": "Instant Recovery Eye Tea",
             "RBO": "Revitalizing Body Oil",
-            "RE": "Restorative Eye Crème",
             "RE2": "Restorative Eye Crème 2.0",
-            "RFC2": "Refreshing Cleanser 2.0",
             "RGC2": "Regenerating Cleanser 2.0",
             "RHM": "Raw Honey Crystal Mask",
-            "RM": "Resurfacing Mask",
             "RM2": "Resurfacing Mask 2.0",
             "RMR2": "Crème Riche 2.0",
             "RNC": "Retinoic Nutrient Face Oil",
@@ -2929,17 +2907,25 @@
             displayResults(sku, skuIngredientNames, sharedIngredients);
         }
 
-        function displayResults(sku, skuIngredientNames, sharedIngredients) {
-            const resultsDiv = document.getElementById('results');
-            const productName = skuToName[sku] || sku; // Use the SKU to name mapping, fallback to SKU if not found
-            resultsDiv.innerHTML = `<h2>Ingredients for ${productName}</h2><ul id="ingredients"><li>${[...skuIngredientNames].join(', ')}</li></ul><h3>Products sharing ingredients with ${productName}</h3>`;
+       function displayResults(sku, skuIngredientNames, sharedIngredients) {
+    const resultsDiv = document.getElementById('results');
+    const productName = skuToName[sku] ? `<h2>Ingredients for ${skuToName[sku]}</h2>` : ''; // Only set productName if found
+    resultsDiv.innerHTML = `${productName}<ul id="ingredients"><li>${[...skuIngredientNames].join(', ')}</li></ul><h3>Products sharing ingredients with ${skuToName[sku] || sku}</h3>`;
 
-            for (const [productSKU, ingredients] of Object.entries(sharedIngredients)) {
-                const ingredientsList = [...ingredients].sort().join('</li><li>');
-                const sharedProductName = skuToName[productSKU] || productSKU; // Translate SKU to product name, fallback to SKU if not found
-                resultsDiv.innerHTML += `<ul><li><strong>${sharedProductName}</strong> shares ${ingredients.size} ingredients:<ul><li>${ingredientsList}</li></ul></li></ul>`;
-            }
+    // Convert sharedIngredients to an array, sort it by the size of ingredients set, and then iterate
+    const sortedSharedIngredients = Object.entries(sharedIngredients)
+        .sort((a, b) => b[1].size - a[1].size); // Sort by number of shared ingredients in descending order
+
+    sortedSharedIngredients.forEach(([productSKU, ingredients]) => {
+        // Check if there's a matching product name for the SKU
+        const sharedProductName = skuToName[productSKU];
+        if (sharedProductName) { // Only proceed if a product name exists
+            const ingredientsList = [...ingredients].sort().join('</li><li>');
+            resultsDiv.innerHTML += `<ul><li><strong>${sharedProductName}</strong> shares ${ingredients.size} ingredients:<ul><li>${ingredientsList}</li></ul></li></ul>`;
         }
+    });
+}
+
     </script>
 </body>
 
